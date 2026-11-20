@@ -1,1 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stylishthread · Sales & Profit</title>
+<meta name="theme-color" content="#5E1538">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stylishthread">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%237A1F4B'/%3E%3Ctext x='31' y='41' text-anchor='middle' font-family='Georgia,serif' font-size='25' font-weight='700' fill='%23fff'%3ES%3Ctspan fill='%23F0CD85'%3ET%3C/tspan%3E%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --wine:#7A1F4B; --wine-d:#5E1538; --wine-50:#F7EEF2; --wine-100:#EEDCE5;
+  --gold:#C9973F; --gold-l:#F0CD85;
+  --bg:#F6F3F1; --card:#fff; --ink:#1E1A22; --ink2:#4A4450; --muted:#6B6470; --line:#E6E0E3;
+  --ok:#14724A; --ok-bg:#E5F3EB; --due:#B42318; --due-bg:#FCEDEB; --warn:#8A5A00; --warn-bg:#FFF3D9;
+  --r:14px; --sh:0 1px 2px rgba(30,26,34,.06),0 4px 14px rgba(30,26,34,.05);
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--font);padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:940px;margin:0 auto;padding:0 14px}
 
+/* header */
+.top{background:linear-gradient(135deg,#86245A,var(--wine-d));color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(60,10,35,.25)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:64px}
+.logo{width:42px;height:42px;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+.brand{flex:1;min-width:0}
+.brand b{display:block;font:700 21px/1.1 var(--serif);letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:400px){.brand b{font-size:18px}.brand small{font-size:11px}.sync{padding:6px 9px;font-size:12px}.top .wrap{gap:9px}}
+.brand small{display:block;font-size:12px;opacity:.85;letter-spacing:.4px}
+.sync{display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:#5BD08F;flex:none}
+.sync.busy i{background:var(--gold-l);animation:pulse 1s infinite}
+.sync.warn i{background:#FFB547}
+@keyframes pulse{50%{opacity:.3}}
+.gear{background:none;border:0;color:#fff;padding:8px;border-radius:10px;display:grid;place-items:center}
+.gear:hover,.sync:hover{background:rgba(255,255,255,.16)}
+
+/* tabs */
+.tabs{display:flex;gap:4px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:64px;z-index:15}
+.tabs .wrap{display:flex;gap:4px;width:100%}
+.tab{flex:1;max-width:200px;border:0;background:none;padding:12px 8px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}
+.tab svg{width:20px;height:20px}
+.tab.on{color:var(--wine);border-bottom-color:var(--wine)}
+.badge{background:var(--due);color:#fff;border-radius:999px;font-size:11px;padding:1px 6px;font-weight:700;min-width:18px;text-align:center}
+.badge:empty{display:none}
+@media (max-width:759px){
+  .tabs{position:fixed;top:auto;bottom:0;left:0;right:0;border:0;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 12px rgba(0,0,0,.06)}
+  .tabs .wrap{padding:0}
+  .tab{max-width:none;flex-direction:column;gap:2px;font-size:12px;padding:8px 4px 9px;border-bottom:0;border-top:3px solid transparent}
+  .tab.on{border-top-color:var(--wine)}
+  .tab .badge{position:absolute;top:4px;left:calc(50% + 6px)}
+}
+
+/* views & cards */
+.view{display:none;padding:16px 0}
+.view.on{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:.4;transform:translateY(4px)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin-bottom:14px}
+.card h2,.h2{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px;color:var(--ink)}
+.h2 .sub{font-weight:400;color:var(--muted);font-size:13px;margin-left:auto}
+.grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.grid.c3{grid-template-columns:2fr 1.3fr 1.1fr}
+.span2{grid-column:span 2}
+@media (max-width:620px){.grid.c3{grid-template-columns:1fr 1fr}.grid.c3 .cust{grid-column:span 2}}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0}
+.f>span{font-size:12.5px;font-weight:600;color:var(--ink2)}
+input,select,textarea{width:100%;border:1.5px solid var(--line);background:#FCFBFA;border-radius:10px;padding:11px 12px;outline:none;transition:border-color .12s,box-shadow .12s;min-height:46px}
+textarea{min-height:64px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--wine);box-shadow:0 0 0 3px rgba(122,31,75,.14);background:#fff}
+input.bad{border-color:var(--due);background:var(--due-bg)}
+input[type=date].notToday{border-color:var(--gold);background:#FFF8E8}
+.hint{font-size:12px;color:var(--warn);font-weight:600}
+
+/* item rows */
+.item{border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#FFFEFD}
+.item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.item-no{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--wine)}
+.icon-btn{border:0;background:var(--wine-50);color:var(--wine);width:32px;height:32px;border-radius:8px;font-size:14px}
+.stepper{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;background:#FCFBFA}
+.stepper button{border:0;background:var(--wine-50);color:var(--wine);width:44px;font-size:20px;font-weight:600}
+.stepper input{border:0;border-radius:0;text-align:center;min-width:0;background:transparent;box-shadow:none}
+.markup{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--muted)}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;color:var(--ink2)}
+.chip.sm{padding:4px 10px;font-size:12px}
+.chip:hover{border-color:var(--wine);color:var(--wine)}
+.chip.on{background:var(--wine);border-color:var(--wine);color:#fff}
+.item-profit{margin-top:10px;font-size:13px;color:var(--muted)}
+.item-profit b{color:var(--ok)}
+.item-profit b.neg{color:var(--due)}
+.add-item{width:100%;border:1.5px dashed #CDB6C2;background:var(--wine-50);color:var(--wine);border-radius:12px;padding:13px;font-weight:700}
+
+/* paid switch */
+.switch{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;user-select:none;background:#FCFBFA}
+.switch input{display:none}
+.switch .tr{width:46px;height:27px;border-radius:999px;background:#D7CFD3;position:relative;flex:none;transition:.15s}
+.switch .tr:after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.15s}
+.switch input:checked+.tr{background:var(--ok)}
+.switch input:checked+.tr:after{left:22px}
+.switch b{display:block}
+.switch small{color:var(--muted)}
+
+/* save bar */
+.savebar{position:fixed;left:0;right:0;bottom:0;z-index:14;background:rgba(255,255,255,.97);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(30,26,34,.08);backdrop-filter:blur(6px)}
+.savebar .wrap{display:flex;align-items:center;gap:12px;padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.savebar .tot{flex:1;min-width:0}
+.savebar .tot b{font-size:20px;display:block;line-height:1.1}
+.savebar .tot span{font-size:12.5px;color:var(--muted)}
+.savebar .tot span em{font-style:normal;color:var(--ok);font-weight:700}
+.btn{border:0;background:var(--wine);color:#fff;border-radius:12px;padding:13px 22px;font-weight:700;font-size:15.5px;box-shadow:0 3px 10px rgba(122,31,75,.3);display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:hover{background:var(--wine-d)}
+.btn:active{transform:translateY(1px)}
+.btn.lite{background:var(--wine-50);color:var(--wine);box-shadow:none}
+.btn.sm{padding:9px 14px;font-size:13.5px;border-radius:10px}
+body:not(.v-sale) .savebar{display:none}
+@media (max-width:759px){.savebar{bottom:calc(58px + env(safe-area-inset-bottom))}.savebar .wrap{padding-bottom:10px}}
+
+/* orders */
+.toolbar{display:flex;gap:8px;margin-bottom:10px}
+.search{position:relative;flex:1}
+.search input{padding-left:40px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+.filters{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.filters select{width:auto;min-height:38px;padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px}
+.due-banner{display:flex;align-items:center;gap:12px;background:var(--due-bg);border:1px solid #F3C6C0;border-radius:var(--r);padding:12px 14px;margin-bottom:12px}
+.due-banner .dt{flex:1}
+.due-banner b{color:var(--due);font-size:18px;display:block}
+.due-banner span{font-size:13px;color:var(--ink2)}
+.modeline{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink2);margin:0 0 10px;font-weight:600}
+.modeline button{margin-left:auto}
+.order{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--due);border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--sh)}
+.order.paid{border-left-color:var(--ok)}
+.o-top{display:flex;gap:10px;justify-content:space-between}
+.o-cust{font-weight:700;font-size:15.5px}
+.o-meta{font-size:12.5px;color:var(--muted)}
+.o-meta .sync-tag{color:var(--warn);font-weight:700}
+.o-amt{text-align:right;white-space:nowrap}
+.o-amt b{font-size:16px}
+.o-amt div{font-size:12px;color:var(--ok);font-weight:600}
+.o-items{font-size:13px;color:var(--ink2);margin:6px 0 10px}
+.o-items span{color:var(--muted)}
+.o-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.paybox{display:inline-flex;align-items:center;gap:8px;border:1.5px solid #EDB4AD;background:var(--due-bg);color:var(--due);border-radius:10px;padding:7px 12px;font-weight:700;font-size:13.5px}
+.paybox .bx{width:18px;height:18px;border:2px solid currentColor;border-radius:5px;display:grid;place-items:center;background:#fff}
+.paybox.on{border-color:#9FD3B6;background:var(--ok-bg);color:var(--ok)}
+.paybox.on .bx{background:var(--ok);border-color:var(--ok)}
+.paybox.on .bx:after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.ghost{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:7px 12px;font-weight:600;font-size:13px;color:var(--ink2);display:inline-flex;gap:6px;align-items:center}
+.ghost:hover{border-color:var(--wine);color:var(--wine)}
+.ghost.del{margin-left:auto;border-color:transparent;color:var(--muted)}
+.ghost.del:hover{color:var(--due);border-color:#EDB4AD}
+.ghost svg{width:16px;height:16px}
+.cust-h{display:flex;align-items:center;gap:8px;margin:16px 0 8px;font-size:13.5px;color:var(--ink2)}
+.cust-h b{color:var(--ink);font-size:15px}
+.cust-h .ghost{margin-left:auto}
+.empty{text-align:center;color:var(--muted);padding:34px 10px}
+.more{display:block;margin:6px auto 0}
+
+/* report */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media (max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--sh)}
+.kpi span{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.kpi b{display:block;font-size:21px;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi small{font-size:12px;color:var(--muted)}
+.kpi.hero{background:linear-gradient(135deg,#86245A,var(--wine-d));color:#fff;border:0}
+.kpi.hero span,.kpi.hero small{color:rgba(255,255,255,.82)}
+.kpi.due b{color:var(--due)}
+.chart{position:relative;height:190px;margin:6px 0 0 44px}
+.grid-l{position:absolute;left:0;right:0;border-top:1px dashed #E8E2E5}
+.grid-l span{position:absolute;right:calc(100% + 8px);top:-8px;font-size:11px;color:var(--muted);white-space:nowrap}
+.bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #CFC7CB}
+.bar{flex:1;height:100%;display:flex;align-items:flex-end;background:none;border:0;padding:0;min-width:0}
+.bar i{display:block;width:100%;max-width:22px;margin:0 auto;background:var(--wine);border-radius:4px 4px 0 0;min-height:0}
+.bar:hover i,.bar:focus i{background:#A13A6E}
+.bar.today i{background:var(--gold)}
+.xl{display:flex;margin:4px 0 0 44px;font-size:11px;color:var(--muted)}
+.xl span{flex:1;text-align:center;min-width:0}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:12px;padding:6px 9px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-110%);opacity:0;transition:opacity .1s;z-index:3}
+.tip.on{opacity:1}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:6px 6px;border-bottom:1px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid #F0EBEE;vertical-align:middle}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.share{height:6px;border-radius:3px;background:var(--wine);margin-top:5px;opacity:.85}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:700px){.two{grid-template-columns:1fr}}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* toast */
+#toast{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:50;display:grid;gap:8px;width:min(440px,92vw);pointer-events:none}
+.t{background:var(--ink);color:#fff;border-radius:12px;padding:11px 14px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:tin .2s ease}
+.t.ok{background:var(--ok)}.t.err{background:var(--due)}.t.warn{background:#7A5200}
+@keyframes tin{from{opacity:0;transform:translateY(-8px)}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body class="v-sale">
+
+<header class="top">
+  <div class="wrap">
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A3326B"/><stop offset="1" stop-color="#4F0F30"/></linearGradient></defs><circle cx="32" cy="32" r="31" fill="url(#lg)" stroke="#F0CD85" stroke-width="1.4"/><circle cx="32" cy="32" r="25.5" fill="none" stroke="#F0CD85" stroke-width="1.1" stroke-dasharray="2.4 2.2" opacity=".9"/><text x="31.5" y="40" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="23" font-weight="700" fill="#fff" letter-spacing="-.5">S<tspan fill="#F0CD85">T</tspan></text><path d="M18 45.5c8 4.4 20.5 4.6 28.5-1.2" fill="none" stroke="#F0CD85" stroke-width="1.4" stroke-linecap="round"/><path d="M44.5 42l6 4.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <div class="brand"><b>Stylishthread</b><small>Sales &amp; Profit Book</small></div>
+    <button class="sync" id="sync" title="Tap to sync now"><i></i><span>…</span></button>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap">
+    <button class="tab on" data-view="sale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>New Sale</button>
+    <button class="tab" data-view="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Orders<span class="badge" id="dueBadge"></span></button>
+    <button class="tab" data-view="report"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Reports</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <!-- ============ NEW SALE ============ -->
+  <section class="view on" id="v-sale">
+    <div class="card">
+      <h2>Customer</h2>
+      <div class="grid c3">
+        <label class="f cust"><span>Customer name *</span><input id="cName" list="dl-cust" autocomplete="off" placeholder="Type name…"></label>
+        <label class="f"><span>Phone (for WhatsApp)</span><input id="cPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="98xxxxxxxx"></label>
+        <label class="f"><span>Sale date</span><input id="cDate" type="date"><em class="hint" id="dateHint" hidden>Not today</em></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Items <span class="sub" id="itemCount"></span></h2>
+      <div id="items"></div>
+      <button type="button" class="add-item" id="addItem">+ Add another item to this order</button>
+    </div>
+
+    <div class="card">
+      <label class="switch"><input type="checkbox" id="cPaid"><span class="tr"></span><span><b id="paidLbl">Payment not received</b><small>Turn on if the customer has already paid</small></span></label>
+      <label class="f" style="margin-top:12px"><span>Notes (optional)</span><input id="cNotes" placeholder="Courier, size, address, etc."></label>
+    </div>
+
+    <div class="card">
+      <h2>Today's entries <span class="sub" id="todaySum"></span></h2>
+      <div id="recent"></div>
+    </div>
+  </section>
+
+  <!-- ============ ORDERS ============ -->
+  <section class="view" id="v-orders">
+    <div class="due-banner" id="dueBanner" hidden>
+      <div class="dt"><b id="dueAmt">₹0</b><span id="dueTxt">pending</span></div>
+      <button class="btn sm" id="showDue">View unpaid</button>
+    </div>
+    <div class="toolbar">
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search name, phone, order no, item…" autocomplete="off" enterkeyhint="search"></div>
+      <button class="btn sm lite" id="searchAll" title="Search in every month">All months</button>
+    </div>
+    <div class="filters" id="filters">
+      <select id="oMonth" aria-label="Month"></select>
+      <button class="chip on" data-f="all">All</button>
+      <button class="chip" data-f="due">Unpaid</button>
+      <button class="chip" data-f="paid">Paid</button>
+    </div>
+    <div class="modeline" id="modeline" hidden></div>
+    <div id="olist"></div>
+  </section>
+
+  <!-- ============ REPORT ============ -->
+  <section class="view" id="v-report">
+    <div class="filters">
+      <select id="rMonth" aria-label="Report month"></select>
+      <span class="note" id="rNote"></span>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="card">
+      <div class="h2">Daily sales <span class="sub" id="chartSub"></span></div>
+      <div class="chart" id="chart"></div>
+      <div class="xl" id="xl"></div>
+    </div>
+    <div class="card">
+      <div class="h2">By item type</div>
+      <div id="cats"></div>
+    </div>
+    <div class="two">
+      <div class="card"><div class="h2">Best-selling items</div><div id="topItems"></div></div>
+      <div class="card"><div class="h2">Top customers</div><div id="topCust"></div></div>
+    </div>
+    <div class="actions">
+      <button class="btn sm" id="shareRep">Share summary on WhatsApp</button>
+      <button class="btn sm lite" id="csv">Download month (Excel/CSV)</button>
+    </div>
+  </section>
+</main>
+
+<div class="savebar">
+  <div class="wrap">
+    <div class="tot"><b id="sumSale">₹0</b><span id="sumMeta">Profit <em>₹0</em></span></div>
+    <button class="btn" id="saveBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Save Sale</button>
+  </div>
+</div>
+
+<datalist id="dl-cust"></datalist>
+<datalist id="dl-items"></datalist>
+
+<div id="toast" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   ✏️  EDIT THESE 3 SETTINGS
+   ===================================================================== */
+
+// 1) Google Sheet link: Apps Script → Deploy → Web app URL (ends with /exec)
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyJpQS6tk3n0mhJGT4-qYA-OTG7tgZqY_AVMDZDZlyDkWzNlDxwzaK9RSe6U3uky9eC/exec';
+
+// 2) UPI ID shown in WhatsApp reminders & bills (leave '' to hide it)
+const UPI_ID = 'yourname@upi';
+
+// 3) Item types shown in the "Item type" dropdown (add / remove / reorder freely)
+const ITEM_TYPES = [
+  'Saree',
+  'Kurti',
+  'Suit / Dress material',
+  'Dress',
+  'Top',
+  'Lehenga',
+  'Dupatta',
+  'Bottom wear',
+  'Jewellery',
+  'Bag',
+  'Footwear',
+  'Kids wear',
+  'Other'
+];
+/* ===================================================================== */
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const LS = {cache:'st_cache_v1', out:'st_outbox_v1'};
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const monthOf = ds => { const [y, m] = String(ds).split('-'); return MONTHS[+m - 1] + ' ' + y; };
+const curMonth = () => monthOf(today());
+const mIdx = name => { const [m, y] = name.split(' '); return +y * 12 + MONTHS.indexOf(m); };
+const nowTime = () => new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase();
+const NF = new Intl.NumberFormat('en-IN', {maximumFractionDigits: 2});
+const inr = n => '₹' + NF.format(Math.round((+n || 0) * 100) / 100);
+const inr0 = n => '₹' + Math.round(+n || 0).toLocaleString('en-IN');
+const num = v => { const n = parseFloat(String(v ?? '').replace(/[₹,\s]/g, '')); return isFinite(n) ? n : 0; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const fmtD = ds => { if (!/^\d{4}-\d{2}-\d{2}$/.test(ds || '')) return ds || ''; const [, m, d] = ds.split('-'); return `${+d} ${MONTHS[+m - 1]}`; };
+const oNum = o => parseInt(String(o || '').replace(/\D/g, ''), 10) || 0;
+function load(k, def) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? def; } catch (e) { return def; } }
+function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+/* ---------------- state ---------------- */
+const cfg = {url: /^https:\/\/script\.google(usercontent)?\.com\//.test(SHEET_URL.trim()) ? SHEET_URL.trim() : '', upi: UPI_ID.trim()};
+let cache = Object.assign({months:[], data:{}, pending:[], ts:{}}, load(LS.cache, {}));
+let outbox = load(LS.out, []); if (!Array.isArray(outbox)) outbox = [];
+const S = {view:'sale', items:[blankItem()], oMonth:curMonth(), oMode:'month', oFilter:'all', q:'', searchRows:[], searching:false,
+           rMonth:curMonth(), limit:60, flushing:false, refreshing:0, lastWrite:0, retryT:0};
+const cats = () => ITEM_TYPES.map(s => String(s).trim()).filter(Boolean);
+function blankItem() { return {item:'', category:'', qty:1, cost:'', sell:''}; }
+
+function saveCache() {
+  const keep = new Set([curMonth(), S.oMonth, S.rMonth, ...Object.keys(cache.data).sort((a, b) => mIdx(b) - mIdx(a)).slice(0, 3)]);
+  for (const k of Object.keys(cache.data)) if (!keep.has(k)) { delete cache.data[k]; delete cache.ts[k]; }
+  store(LS.cache, cache);
+}
+const saveOut = () => store(LS.out, outbox);
+
+/* ---------------- server ---------------- */
+async function api(action, data = {}, ms = 25000) {
+  if (!cfg.url) throw Object.assign(new Error('Google Sheet link missing – paste SHEET_URL at the top of index.html'), {code:'NO_URL'});
+  const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
+  let res;
+  try {
+    res = await fetch(cfg.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(Object.assign({action}, data)), signal: ctl.signal});
+  } catch (e) { throw Object.assign(new Error('No internet / Google not reachable'), {net:true}); }
+  finally { clearTimeout(t); }
+  let j;
+  try { j = await res.json(); }
+  catch (e) { throw Object.assign(new Error('Google sent an unexpected reply – check the Web App URL and that access is "Anyone"'), {code:'BAD_URL'}); }
+  if (!j.ok) throw Object.assign(new Error(j.error || 'Server error'), {code: j.code || 'SERVER'});
+  return j;
+}
+
+function handleErr(e, quiet) {
+  if (e.code === 'NO_URL') { if (!quiet) toast(e.message, 'warn'); }
+  else if (e.net) { if (!quiet) toast('Offline – entries are kept on this phone and will sync automatically', 'warn'); }
+  else toast(e.message, 'err');
+}
+
+/* ---------------- local data helpers ---------------- */
+const okey = r => r.id || (r.s + '|' + r.o);
+const lists = () => [...Object.values(cache.data), cache.pending, S.searchRows];
+function rowsFromOrder(o) {
+  const s = monthOf(o.date);
+  return o.items.map(it => ({s, o:'', id:o.id, d:o.date, t:o.time, c:o.customer, p:o.phone, i:it.item, g:it.category,
+    q:it.qty, cp:it.cost, sp:it.sell, pd:!!o.paid, po:o.paid ? today() : '', n:o.notes, sync:1}));
+}
+function addLocal(rows) {
+  const s = rows[0].s, id = rows[0].id;
+  const arr = cache.data[s] || (cache.data[s] = []);
+  if (!arr.some(r => r.id === id)) arr.push(...rows.map(r => ({...r})));
+  if (!rows[0].pd && !cache.pending.some(r => r.id === id)) cache.pending.push(...rows.map(r => ({...r})));
+  if (!cache.months.includes(s)) { cache.months.push(s); cache.months.sort((a, b) => mIdx(b) - mIdx(a)); }
+}
+function findRows(key) {
+  for (const l of lists()) { const f = l.filter(r => okey(r) === key); if (f.length) return f; }
+  return [];
+}
+function setPaidLocal(key, paid) {
+  const src = findRows(key).map(r => ({...r}));
+  for (const l of lists()) for (const r of l) if (okey(r) === key) { r.pd = paid; r.po = paid ? today() : ''; }
+  if (paid) cache.pending = cache.pending.filter(r => okey(r) !== key);
+  else if (!cache.pending.some(r => okey(r) === key)) cache.pending.push(...src.map(r => ({...r, pd:false, po:''})));
+}
+function removeLocal(key) {
+  for (const k of Object.keys(cache.data)) cache.data[k] = cache.data[k].filter(r => okey(r) !== key);
+  cache.pending = cache.pending.filter(r => okey(r) !== key);
+  S.searchRows = S.searchRows.filter(r => okey(r) !== key);
+}
+function applyOrderNo(id, no) {
+  for (const l of lists()) for (const r of l) if (r.id === id) { r.o = no; delete r.sync; }
+}
+function mergeUnsynced() {
+  for (const j of outbox) {
+    if (j.op === 'add') addLocal(rowsFromOrder(j.order));
+    else if (j.op === 'paid') setPaidLocal(j.key, j.paid);
+  }
+}
+function group(rows) {
+  const m = new Map();
+  for (const r of rows) {
+    const k = okey(r);
+    let o = m.get(k);
+    if (!o) { o = {key:k, s:r.s, o:r.o, id:r.id, d:r.d, t:r.t, c:r.c, p:r.p, n:r.n, pd:true, sync:r.sync, items:[], sale:0, cost:0, qty:0}; m.set(k, o); }
+    o.items.push(r); o.sale += r.q * r.sp; o.cost += r.q * r.cp; o.qty += r.q;
+    if (!r.pd) o.pd = false;
+  }
+  return [...m.values()].sort((a, b) => (b.sync ? 1 : 0) - (a.sync ? 1 : 0) || (b.d > a.d ? 1 : b.d < a.d ? -1 : 0) || oNum(b.o) - oNum(a.o));
+}
+
+/* ---------------- sync engine ---------------- */
+async function flush() {
+  if (S.flushing || !outbox.length || !cfg.url) { setSync(); return; }
+  S.flushing = true; setSync();
+  try {
+    while (outbox.length) {
+      const job = outbox[0];
+      if (job.op === 'add') {
+        const sentPaid = !!job.order.paid;
+        const r = await api('addOrder', {order: job.order});
+        outbox = outbox.filter(j => j !== job);
+        applyOrderNo(job.order.id, r.orderNo);
+        if (!!job.order.paid !== sentPaid) outbox.push({op:'paid', key:job.order.id, sheet:r.sheet, orderNo:r.orderNo, paid:!!job.order.paid});
+        toast(`Order ${r.orderNo} saved to sheet ✓`, 'ok');
+      } else if (job.op === 'paid') {
+        try { await api('setPaid', {sheet:job.sheet, orderNo:job.orderNo, paid:job.paid}); }
+        catch (e) { if (e.net || e.code === 'NO_URL' || e.code === 'BAD_URL') throw e; toast(e.message, 'err'); }
+        outbox = outbox.filter(j => j !== job);
+      } else outbox = outbox.filter(j => j !== job);
+      S.lastWrite = Date.now(); saveOut(); saveCache(); renderAll();
+    }
+  } catch (e) {
+    if (e.net) { clearTimeout(S.retryT); S.retryT = setTimeout(flush, 15000); }
+    handleErr(e, true);
+  } finally { S.flushing = false; setSync(); }
+}
+
+async function refresh(month = curMonth()) {
+  if (!cfg.url) { setSync(); return; }
+  const started = Date.now(); S.refreshing++; setSync();
+  try {
+    const r = await api('bootstrap', {month});
+    cache.months = r.months; cache.data[month] = r.rows; cache.pending = r.pending; cache.ts[month] = Date.now();
+    mergeUnsynced(); saveCache(); fillDatalists(); renderAll();
+    if (S.lastWrite > started) setTimeout(() => refresh(month), 400);
+  } catch (e) { handleErr(e, true); }
+  finally { S.refreshing--; setSync(); }
+}
+
+async function loadMonth(m) {
+  if (m === curMonth()) return refresh(m);
+  if (!cfg.url) return;
+  S.refreshing++; setSync();
+  try { const r = await api('month', {month:m}); cache.data[m] = r.rows; cache.ts[m] = Date.now(); mergeUnsynced(); saveCache(); renderAll(); }
+  catch (e) { handleErr(e, true); }
+  finally { S.refreshing--; setSync(); }
+}
+const ensureMonth = m => { if (!cache.ts[m] || Date.now() - cache.ts[m] > 60000) loadMonth(m); };
+
+function setSync() {
+  const el = $('#sync'), n = outbox.length;
+  el.className = 'sync';
+  let txt;
+  if (!cfg.url) { el.classList.add('warn'); txt = 'Not connected'; }
+  else if (S.flushing) { el.classList.add('busy'); txt = `Saving ${n}…`; }
+  else if (n) { el.classList.add('warn'); txt = `${n} waiting · retry`; }
+  else if (S.refreshing) { el.classList.add('busy'); txt = 'Updating…'; }
+  else txt = 'Synced';
+  el.lastChild.textContent = txt;
+}
+
+/* ---------------- toast ---------------- */
+function toast(msg, type = '') {
+  const t = document.createElement('div'); t.className = 't ' + type; t.textContent = msg;
+  const box = $('#toast'); box.appendChild(t);
+  while (box.children.length > 3) box.firstChild.remove();
+  setTimeout(() => t.remove(), type === 'err' ? 5000 : 2600);
+}
+
+/* ================= NEW SALE ================= */
+function catOptions(sel) {
+  const list = cats(); if (sel && !list.includes(sel)) list.push(sel);
+  return `<option value="">Choose…</option>` + list.map(c => `<option${c === sel ? ' selected' : ''}>${esc(c)}</option>`).join('');
+}
+function itemCard(it, k) {
+  return `<div class="item" data-k="${k}">
+    <div class="item-head"><span class="item-no">Item ${k + 1}</span>${S.items.length > 1 ? '<button type="button" class="icon-btn" data-act="rm" aria-label="Remove item">✕</button>' : ''}</div>
+    <div class="grid">
+      <label class="f span2"><span>Item name (optional)</span><input data-f="item" list="dl-items" value="${esc(it.item)}" placeholder="e.g. Banarasi silk saree" autocomplete="off"></label>
+      <label class="f"><span>Item type</span><select data-f="category">${catOptions(it.category)}</select></label>
+      <div class="f"><span>Quantity</span><div class="stepper"><button type="button" data-act="dec" aria-label="Less">−</button><input data-f="qty" inputmode="numeric" value="${esc(it.qty)}" aria-label="Quantity"><button type="button" data-act="inc" aria-label="More">+</button></div></div>
+      <label class="f"><span>Cost price ₹ (1 pc) *</span><input data-f="cost" inputmode="decimal" value="${esc(it.cost)}" placeholder="Required"></label>
+      <label class="f"><span>Selling price ₹ (1 pc) *</span><input data-f="sell" inputmode="decimal" value="${esc(it.sell)}" placeholder="Required"></label>
+    </div>
+    <div class="markup"><span>Quick price:</span>${[10, 20, 30, 50, 100].map(p => `<button type="button" class="chip sm" data-act="mk" data-p="${p}">+${p}%</button>`).join('')}</div>
+    <div class="item-profit" data-profit></div>
+  </div>`;
+}
+function renderItems() {
+  $('#items').innerHTML = S.items.map(itemCard).join('');
+  updateSums();
+}
+function updateSums() {
+  let sale = 0, cost = 0, qty = 0;
+  S.items.forEach((it, k) => {
+    const q = num(it.qty), c = num(it.cost), s = num(it.sell);
+    sale += q * s; cost += q * c; qty += q;
+    const el = $(`.item[data-k="${k}"] [data-profit]`);
+    if (el) {
+      if (s > 0) { const p = (s - c) * q; el.innerHTML = `Amount <b style="color:var(--ink)">${inr(q * s)}</b> · Profit <b class="${p < 0 ? 'neg' : ''}">${inr(p)}</b>${c > 0 ? ` (${Math.round((s - c) / c * 100)}%)` : ''}`; }
+      else el.textContent = 'Enter cost & selling price to see profit';
+    }
+  });
+  $('#sumSale').textContent = inr(sale);
+  $('#sumMeta').innerHTML = `${qty} pc · Profit <em${sale - cost < 0 ? ' style="color:var(--due)"' : ''}>${inr(sale - cost)}</em>`;
+  $('#itemCount').textContent = S.items.length > 1 ? `${S.items.length} items in this order` : '';
+}
+$('#items').addEventListener('input', e => {
+  const f = e.target.dataset.f; if (!f) return;
+  const k = +e.target.closest('.item').dataset.k;
+  S.items[k][f] = e.target.value; e.target.classList.remove('bad');
+  if (f === 'item' && !S.items[k].category) { // auto-pick type for an item sold before
+    const known = itemTypes.get(e.target.value.trim().toLowerCase());
+    if (known) { S.items[k].category = known; e.target.closest('.item').querySelector('[data-f=category]').innerHTML = catOptions(known); }
+  }
+  updateSums();
+});
+$('#items').addEventListener('change', e => { if (e.target.dataset.f === 'category') { S.items[+e.target.closest('.item').dataset.k].category = e.target.value; } });
+$('#items').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const card = b.closest('.item'), k = +card.dataset.k, it = S.items[k];
+  const act = b.dataset.act;
+  if (act === 'rm') { S.items.splice(k, 1); renderItems(); return; }
+  if (act === 'inc' || act === 'dec') { it.qty = Math.max(1, num(it.qty) + (act === 'inc' ? 1 : -1)); card.querySelector('[data-f=qty]').value = it.qty; }
+  if (act === 'mk') {
+    const c = num(it.cost); if (!c) { toast('Enter cost price first', 'warn'); card.querySelector('[data-f=cost]').focus(); return; }
+    it.sell = String(Math.round(c * (1 + b.dataset.p / 100))); card.querySelector('[data-f=sell]').value = it.sell;
+  }
+  updateSums();
+});
+$('#addItem').onclick = () => {
+  S.items.push(blankItem()); renderItems();
+  const last = $$('.item').pop(); last.scrollIntoView({behavior:'smooth', block:'center'}); last.querySelector('[data-f=item]').focus({preventScroll:true});
+};
+$('#cPaid').onchange = e => { $('#paidLbl').textContent = e.target.checked ? 'Payment received ✓' : 'Payment not received'; };
+$('#cDate').oninput = () => { const nt = $('#cDate').value !== today(); $('#cDate').classList.toggle('notToday', nt); $('#dateHint').hidden = !nt; };
+$('#cName').addEventListener('input', () => {
+  const k = customers.get($('#cName').value.trim().toLowerCase());
+  if (k && k.phone && !$('#cPhone').value) $('#cPhone').value = k.phone;
+  $('#cName').classList.remove('bad');
+});
+
+function saveSale() {
+  const name = $('#cName').value.trim();
+  let ok = true, first = null;
+  const flag = el => { el.classList.add('bad'); ok = false; first = first || el; };
+  if (!name) flag($('#cName'));
+  const items = [];
+  S.items.forEach((it, k) => {
+    const card = $(`.item[data-k="${k}"]`);
+    const q = num(it.qty) > 0 ? num(it.qty) : 1, c = num(it.cost), s = num(it.sell);
+    const nm = it.item.trim() || it.category || 'Item';
+    if (String(it.cost).trim() === '' || c < 0) flag(card.querySelector('[data-f=cost]'));
+    if (String(it.sell).trim() === '' || s <= 0) flag(card.querySelector('[data-f=sell]'));
+    items.push({item:nm, category:it.category || 'Other', qty:q, cost:c, sell:s});
+  });
+  if (!ok) { toast('Please fill the highlighted boxes', 'err'); first.focus(); return; }
+  const date = $('#cDate').value || today();
+  const order = {id:uid(), date, time:nowTime(), customer:name, phone:$('#cPhone').value.trim(), notes:$('#cNotes').value.trim(), paid:$('#cPaid').checked, items};
+  addLocal(rowsFromOrder(order));
+  outbox.push({op:'add', order});
+  saveOut(); saveCache();
+  learnRows(rowsFromOrder(order)); fillDatalists();
+  // reset for the next sale (date kept – handy when entering a batch for one day)
+  S.items = [blankItem()]; renderItems();
+  $('#cName').value = ''; $('#cPhone').value = ''; $('#cNotes').value = ''; $('#cPaid').checked = false; $('#cPaid').onchange({target:$('#cPaid')});
+  window.scrollTo({top:0, behavior:'smooth'}); $('#cName').focus({preventScroll:true});
+  toast(cfg.url ? `Saved for ${name} ✓` : `Saved on this phone – add SHEET_URL in index.html to sync`, cfg.url ? 'ok' : 'warn');
+  renderAll(); flush();
+}
+$('#saveBtn').onclick = saveSale;
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && S.view === 'sale') saveSale(); });
+
+function renderRecent() {
+  const t = today();
+  const orders = group((cache.data[curMonth()] || []).filter(r => r.d === t));
+  const sale = orders.reduce((a, o) => a + o.sale, 0), profit = orders.reduce((a, o) => a + o.sale - o.cost, 0);
+  $('#todaySum').textContent = orders.length ? `${orders.length} orders · ${inr0(sale)} · profit ${inr0(profit)}` : '';
+  $('#recent').innerHTML = orders.length ? orders.slice(0, 8).map(orderCard).join('') +
+    (orders.length > 8 ? `<button class="ghost more" data-goto="orders">See all ${orders.length} in Orders →</button>` : '')
+    : '<div class="empty">No sales entered today yet.</div>';
+}
+
+/* autocomplete memory */
+const customers = new Map(), itemTypes = new Map();
+function learnRows(rows) {
+  for (const r of rows) {
+    if (r.c) { const k = r.c.trim().toLowerCase(); const prev = customers.get(k); if (!prev || (!prev.phone && r.p)) customers.set(k, {name:r.c.trim(), phone:r.p || (prev && prev.phone) || ''}); }
+    if (r.i) itemTypes.set(r.i.trim().toLowerCase(), r.g || '');
+  }
+}
+function fillDatalists() {
+  for (const l of lists()) learnRows(l);
+  $('#dl-cust').innerHTML = [...customers.values()].slice(-400).map(c => `<option value="${esc(c.name)}">${esc(c.phone)}</option>`).join('');
+  $('#dl-items').innerHTML = [...itemTypes.keys()].slice(-400).map(i => `<option value="${esc(i.replace(/\b\w/g, x => x.toUpperCase()))}">`).join('');
+}
+
+/* ================= ORDERS ================= */
+const ICON_WA = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4a.5.5 0 0 0 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>';
+function orderCard(o) {
+  const items = o.items.map(r => `${esc(r.i)}${r.q > 1 ? ` <span>×${r.q}</span>` : ''}`).join(' · ');
+  const other = o.s !== curMonth() ? ` · ${esc(o.s)}` : '';
+  return `<article class="order${o.pd ? ' paid' : ''}" data-key="${esc(o.key)}">
+    <div class="o-top">
+      <div><div class="o-cust">${esc(o.c) || '—'}</div>
+      <div class="o-meta">${o.o ? esc(o.o) : '<span class="sync-tag">Syncing…</span>'} · ${fmtD(o.d)}${o.t ? ' · ' + esc(o.t) : ''}${other}</div></div>
+      <div class="o-amt"><b>${inr(o.sale)}</b><div>+${inr(o.sale - o.cost)} profit</div></div>
+    </div>
+    <div class="o-items">${items}${o.n ? ` <span>— ${esc(o.n)}</span>` : ''}</div>
+    <div class="o-actions">
+      <button class="paybox${o.pd ? ' on' : ''}" role="checkbox" aria-checked="${o.pd}" data-act="paid"><span class="bx"></span>${o.pd ? 'Paid' : 'Not paid'}</button>
+      <button class="ghost" data-act="${o.pd ? 'bill' : 'remind'}">${ICON_WA}${o.pd ? 'Send bill' : 'Remind'}</button>
+      <button class="ghost del" data-act="del">Delete</button>
+    </div>
+  </article>`;
+}
+function monthOptions(sel) {
+  const ms = [...new Set([curMonth(), ...cache.months])].sort((a, b) => mIdx(b) - mIdx(a));
+  return ms.map(m => `<option${m === sel ? ' selected' : ''}>${m}</option>`).join('');
+}
+function renderOrders() {
+  $('#oMonth').innerHTML = monthOptions(S.oMonth);
+  $$('#filters .chip').forEach(c => c.classList.toggle('on', S.oMode === 'month' && c.dataset.f === S.oFilter));
+  // pending banner (all months)
+  const due = group(cache.pending);
+  const dueAmt = due.reduce((a, o) => a + o.sale, 0);
+  const ppl = new Set(due.map(o => (o.c || '').toLowerCase())).size;
+  $('#dueBanner').hidden = !due.length || S.oMode === 'unpaid';
+  $('#dueAmt').textContent = inr0(dueAmt) + ' payment pending';
+  $('#dueTxt').textContent = `${due.length} orders · ${ppl} customers · all months`;
+
+  let rows = S.oMode === 'unpaid' ? cache.pending : S.oMode === 'search' ? S.searchRows : (cache.data[S.oMonth] || []);
+  let orders = group(rows);
+  if (S.oMode === 'month' && S.oFilter !== 'all') orders = orders.filter(o => S.oFilter === 'paid' ? o.pd : !o.pd);
+  const q = S.q.trim().toLowerCase();
+  if (q) orders = orders.filter(o => (o.c + ' ' + o.p + ' ' + o.o + ' ' + o.items.map(r => r.i + ' ' + r.g).join(' ')).toLowerCase().includes(q));
+
+  const ml = $('#modeline');
+  if (S.oMode !== 'month') {
+    const amt = orders.reduce((a, o) => a + (o.pd ? 0 : o.sale), 0);
+    ml.hidden = false;
+    ml.innerHTML = (S.oMode === 'unpaid' ? `Unpaid orders – all months · ${inr0(amt)}` : S.searching ? 'Searching all months…' : `Results in all months for “${esc(S.searchQ)}”`) +
+      '<button class="ghost" id="backMonth">✕ Back to month</button>';
+  } else {
+    ml.hidden = !orders.length;
+    const sale = orders.reduce((a, o) => a + o.sale, 0);
+    ml.innerHTML = `${orders.length} orders · ${inr0(sale)}`;
+  }
+  let html;
+  if (S.oMode === 'unpaid' && orders.length) { // group by customer, biggest dues first
+    const by = new Map();
+    for (const o of orders) { const k = (o.c || '').trim().toLowerCase(); if (!by.has(k)) by.set(k, []); by.get(k).push(o); }
+    const groups = [...by.values()].sort((a, b) => b.reduce((s, o) => s + o.sale, 0) - a.reduce((s, o) => s + o.sale, 0));
+    let shown = 0; html = '';
+    for (const g of groups) {
+      if (shown >= S.limit) break;
+      const tot = g.reduce((s, o) => s + o.sale, 0);
+      html += `<div class="cust-h"><b>${esc(g[0].c)}</b> ${g.length} order${g.length > 1 ? 's' : ''} · ${inr0(tot)}${g.length > 1 ? `<button class="ghost" data-remindall="${esc(g[0].key)}">${ICON_WA}Remind all</button>` : ''}</div>` + g.map(orderCard).join('');
+      shown += g.length;
+    }
+  } else html = orders.slice(0, S.limit).map(orderCard).join('');
+  $('#olist').innerHTML = orders.length
+    ? html + (orders.length > S.limit ? `<button class="btn lite sm more" id="moreBtn">Show more (${orders.length - S.limit})</button>` : '')
+    : `<div class="empty">${S.searching ? 'Searching…' : q ? `Nothing found in this list. <br><br><button class="btn sm lite" id="searchAll2">Search all months for “${esc(S.q.trim())}”</button>` : 'No orders here yet.'}</div>`;
+}
+$('#oMonth').onchange = e => { S.oMonth = e.target.value; S.oMode = 'month'; S.limit = 60; renderOrders(); ensureMonth(S.oMonth); };
+$('#filters').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; S.oMode = 'month'; S.oFilter = c.dataset.f; S.limit = 60; renderOrders(); });
+let qT;
+$('#q').addEventListener('input', e => { clearTimeout(qT); qT = setTimeout(() => { S.q = e.target.value; S.limit = 60; renderOrders(); }, 90); });
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') { S.q = e.target.value; searchAll(); } });
+$('#searchAll').onclick = () => { S.q = $('#q').value; searchAll(); };
+$('#showDue').onclick = () => { S.oMode = 'unpaid'; S.limit = 60; renderOrders(); if (cfg.url) refresh(); };
+async function searchAll() {
+  const q = S.q.trim(); if (!q) { $('#q').focus(); return; }
+  S.oMode = 'search'; S.searchQ = q; S.searchRows = []; S.searching = true; renderOrders();
+  try { const r = await api('search', {q}); S.searchRows = r.rows; mergeUnsynced(); }
+  catch (e) { handleErr(e); }
+  finally { S.searching = false; renderOrders(); }
+}
+
+function onOrderClick(e) {
+  if (e.target.closest('#backMonth')) { S.oMode = 'month'; S.limit = 60; renderOrders(); return; }
+  if (e.target.closest('#moreBtn')) { S.limit += 100; renderOrders(); return; }
+  if (e.target.closest('#searchAll2')) { searchAll(); return; }
+  const g = e.target.closest('[data-goto]'); if (g) { go(g.dataset.goto); return; }
+  const ra = e.target.closest('[data-remindall]');
+  if (ra) {
+    const first = group(findRows(ra.dataset.remindall))[0]; if (!first) return;
+    const nm = (first.c || '').trim().toLowerCase();
+    const os = group(cache.pending).filter(o => (o.c || '').trim().toLowerCase() === nm);
+    const tot = os.reduce((s, o) => s + o.sale, 0);
+    const txt = `Hi ${first.c} 😊\nA gentle reminder from *Stylishthread* – payment pending:\n` +
+      os.map(o => `• ${o.o} (${fmtD(o.d)}) ${o.items.map(r => r.i).join(', ')} – ${inr(o.sale)}`).join('\n') +
+      `\n\n*Total due: ${inr(tot)}*${upiLine()}\nThank you! 🙏`;
+    window.open(waLink(os.find(o => o.p)?.p || '', txt), '_blank'); return;
+  }
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const card = b.closest('.order'); if (!card) return;
+  const key = card.dataset.key, rows = findRows(key); if (!rows.length) return;
+  const o = group(rows)[0];
+  if (b.dataset.act === 'paid') togglePaid(key, o);
+  else if (b.dataset.act === 'remind') window.open(waLink(o.p, remindText(o)), '_blank');
+  else if (b.dataset.act === 'bill') window.open(waLink(o.p, billText(o)), '_blank');
+  else if (b.dataset.act === 'del') deleteOrder(key, o);
+}
+$('#olist').addEventListener('click', onOrderClick);
+$('#v-orders').addEventListener('click', e => { if (e.target.closest('#backMonth')) onOrderClick(e); });
+$('#recent').addEventListener('click', onOrderClick);
+
+function togglePaid(key, o) {
+  const paid = !o.pd;
+  setPaidLocal(key, paid);
+  if (!o.o) { const job = outbox.find(j => j.op === 'add' && j.order.id === o.id); if (job) job.order.paid = paid; }
+  else { outbox = outbox.filter(j => !(j.op === 'paid' && j.key === key)); outbox.push({op:'paid', key, sheet:o.s, orderNo:o.o, paid}); }
+  saveOut(); saveCache(); renderAll();
+  toast(paid ? `${o.c} – marked PAID ✓` : `${o.c} – marked not paid`, paid ? 'ok' : '');
+  flush();
+}
+async function deleteOrder(key, o) {
+  if (!confirm(`Delete order ${o.o || ''} of ${o.c} (${inr(o.sale)})?\nThis also removes it from the Google Sheet.`)) return;
+  if (!o.o) { outbox = outbox.filter(j => !(j.op === 'add' && j.order.id === o.id)); saveOut(); removeLocal(key); saveCache(); renderAll(); toast('Deleted'); return; }
+  try { await api('deleteOrder', {sheet:o.s, orderNo:o.o}); removeLocal(key); saveCache(); renderAll(); toast(`Order ${o.o} deleted`); }
+  catch (e) { handleErr(e); }
+}
+
+/* WhatsApp helpers */
+function waLink(phone, text) {
+  let d = String(phone || '').replace(/\D/g, '');
+  if (d.length === 10) d = '91' + d; else if (d.length === 11 && d[0] === '0') d = '91' + d.slice(1);
+  return `https://wa.me/${d}?text=${encodeURIComponent(text)}`;
+}
+const upiLine = () => cfg.upi ? `\nUPI: ${cfg.upi}` : '';
+function billText(o) {
+  const lines = o.items.map(r => `• ${r.i}${r.q > 1 ? ` × ${r.q}` : ''} – ${inr(r.q * r.sp)}`).join('\n');
+  return `*Stylishthread*\nOrder ${o.o} · ${fmtD(o.d)}\n\nHi ${o.c},\n${lines}\n\n*Total: ${inr(o.sale)}*\n` +
+    (o.pd ? 'Payment received ✅ Thank you for shopping with Stylishthread!' : `Payment pending${upiLine()}`);
+}
+function remindText(o) {
+  return `Hi ${o.c} 😊\nA gentle reminder from *Stylishthread* – payment of *${inr(o.sale)}* for order ${o.o || ''} (${o.items.map(r => r.i).join(', ')}, ${fmtD(o.d)}) is pending.${upiLine()}\nThank you! 🙏`;
+}
+
+/* ================= REPORTS ================= */
+function stats(rows) {
+  const st = {sale:0, cost:0, qty:0, rcv:0, due:0, cat:new Map(), item:new Map(), cust:new Map(), day:new Map()};
+  for (const r of rows) {
+    const s = r.q * r.sp, c = r.q * r.cp;
+    st.sale += s; st.cost += c; st.qty += r.q; r.pd ? st.rcv += s : st.due += s;
+    const g = r.g || 'Other', cg = st.cat.get(g) || {q:0, s:0, p:0}; cg.q += r.q; cg.s += s; cg.p += s - c; st.cat.set(g, cg);
+    const ik = (r.i || '').trim(), it = st.item.get(ik) || {q:0, s:0, p:0}; it.q += r.q; it.s += s; it.p += s - c; st.item.set(ik, it);
+    const ck = (r.c || '').trim(), cu = st.cust.get(ck) || {s:0, n:new Set()}; cu.s += s; cu.n.add(okey(r)); st.cust.set(ck, cu);
+    const dy = st.day.get(r.d) || {s:0, n:new Set()}; dy.s += s; dy.n.add(okey(r)); st.day.set(r.d, dy);
+  }
+  st.orders = new Set(rows.map(okey)).size;
+  return st;
+}
+function renderReport() {
+  const m = S.rMonth, rows = cache.data[m] || [];
+  $('#rMonth').innerHTML = monthOptions(m);
+  $('#rNote').textContent = cache.ts[m] ? 'Updated ' + new Date(cache.ts[m]).toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}) : (cfg.url ? 'Loading…' : '');
+  const st = stats(rows), profit = st.sale - st.cost;
+  const margin = st.sale ? Math.round(profit / st.sale * 100) : 0;
+  $('#kpis').innerHTML = `
+    <div class="kpi hero"><span>Total sales</span><b>${inr0(st.sale)}</b><small>${m}</small></div>
+    <div class="kpi"><span>Profit</span><b style="color:var(--ok)">${inr0(profit)}</b><small>${margin}% margin</small></div>
+    <div class="kpi"><span>Orders</span><b>${st.orders}</b><small>Avg ${inr0(st.orders ? st.sale / st.orders : 0)} / order</small></div>
+    <div class="kpi"><span>Items sold</span><b>${NF.format(st.qty)}</b><small>Cost ${inr0(st.cost)}</small></div>
+    <div class="kpi"><span>Received</span><b>${inr0(st.rcv)}</b><small>${st.sale ? Math.round(st.rcv / st.sale * 100) : 0}% collected</small></div>
+    <div class="kpi due"><span>Pending</span><b>${inr0(st.due)}</b><small>to collect this month</small></div>
+    <div class="kpi"><span>Best day</span><b>${bestDay(st)}</b><small>&nbsp;</small></div>
+    <div class="kpi"><span>Top type</span><b style="font-size:17px">${esc(([...st.cat.entries()].sort((a, b) => b[1].s - a[1].s)[0] || ['—'])[0])}</b><small>by sales</small></div>`;
+  renderChart(m, st);
+  const catRows = [...st.cat.entries()].sort((a, b) => b[1].s - a[1].s);
+  $('#cats').innerHTML = catRows.length ? `<table><thead><tr><th>Type</th><th class="n">Qty</th><th class="n">Sales</th><th class="n">Profit</th></tr></thead><tbody>${
+    catRows.map(([g, v]) => `<tr><td>${esc(g)}<div class="share" style="width:${Math.max(2, v.s / st.sale * 100)}%"></div></td><td class="n">${NF.format(v.q)}</td><td class="n">${inr0(v.s)}</td><td class="n">${inr0(v.p)}</td></tr>`).join('')}</tbody></table>` : '<div class="empty">No sales in this month.</div>';
+  const top = [...st.item.entries()].sort((a, b) => b[1].q - a[1].q || b[1].s - a[1].s).slice(0, 6);
+  $('#topItems').innerHTML = top.length ? `<table><tbody>${top.map(([i, v]) => `<tr><td>${esc(i)}</td><td class="n">${NF.format(v.q)} pc</td><td class="n">${inr0(v.p)} profit</td></tr>`).join('')}</tbody></table>` : '<div class="empty">—</div>';
+  const tc = [...st.cust.entries()].sort((a, b) => b[1].s - a[1].s).slice(0, 6);
+  $('#topCust').innerHTML = tc.length ? `<table><tbody>${tc.map(([c, v]) => `<tr><td>${esc(c)}</td><td class="n">${v.n.size} orders</td><td class="n">${inr0(v.s)}</td></tr>`).join('')}</tbody></table>` : '<div class="empty">—</div>';
+}
+function bestDay(st) { const b = [...st.day.entries()].sort((a, b) => b[1].s - a[1].s)[0]; return b ? fmtD(b[0]) : '—'; }
+function niceMax(v) { if (v <= 0) return 1000; const p = Math.pow(10, Math.floor(Math.log10(v))); for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= v) return m * p; return 10 * p; }
+function renderChart(m, st) {
+  const [mn, y] = m.split(' '), mi = MONTHS.indexOf(mn), days = new Date(+y, mi + 1, 0).getDate();
+  const vals = []; for (let d = 1; d <= days; d++) { const key = `${y}-${pad(mi + 1)}-${pad(d)}`, v = st.day.get(key); vals.push({key, d, s:v ? v.s : 0, n:v ? v.n.size : 0}); }
+  const max = niceMax(Math.max(...vals.map(v => v.s))), t = today();
+  const short = n => n >= 100000 ? '₹' + (n / 100000).toFixed(n % 100000 ? 1 : 0) + 'L' : n >= 1000 ? '₹' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'k' : '₹' + n;
+  $('#chartSub').textContent = `${st.day.size} selling days`;
+  $('#chart').innerHTML = [1, .5, 0].map(f => `<div class="grid-l" style="top:${(1 - f) * 100}%"><span>${short(max * f)}</span></div>`).join('') +
+    `<div class="bars">${vals.map(v => `<button class="bar${v.key === t ? ' today' : ''}" data-tip="${v.d} ${mn}: ${inr0(v.s)} · ${v.n} order${v.n === 1 ? '' : 's'}" aria-label="${v.d} ${mn}: ${inr0(v.s)}"><i style="height:${v.s / max * 100}%"></i></button>`).join('')}</div><div class="tip" id="tip"></div>`;
+  $('#xl').innerHTML = vals.map(v => `<span>${v.d === 1 || v.d % 5 === 0 ? v.d : ''}</span>`).join('');
+}
+function showTip(e) {
+  const b = e.target.closest('.bar'), tip = $('#tip'); if (!tip) return;
+  if (!b) { tip.classList.remove('on'); return; }
+  const c = $('#chart').getBoundingClientRect(), r = b.getBoundingClientRect(), bar = b.firstChild.getBoundingClientRect();
+  tip.textContent = b.dataset.tip;
+  tip.style.left = Math.min(Math.max(r.left + r.width / 2 - c.left, 60), c.width - 60) + 'px';
+  tip.style.top = Math.min(bar.top - c.top, c.height - 4) + 'px';
+  tip.classList.add('on');
+}
+$('#chart').addEventListener('pointerover', showTip);
+$('#chart').addEventListener('focusin', showTip);
+$('#chart').addEventListener('pointerleave', () => { const t = $('#tip'); if (t) t.classList.remove('on'); });
+$('#rMonth').onchange = e => { S.rMonth = e.target.value; renderReport(); ensureMonth(S.rMonth); };
+$('#shareRep').onclick = () => {
+  const m = S.rMonth, st = stats(cache.data[m] || []);
+  const topC = [...st.cat.entries()].sort((a, b) => b[1].s - a[1].s).slice(0, 3).map(([g, v]) => `${g} ${inr0(v.s)}`).join(', ');
+  const txt = `*Stylishthread – ${m}*\nSales: ${inr0(st.sale)}\nProfit: ${inr0(st.sale - st.cost)}\nOrders: ${st.orders} · Items: ${st.qty}\nReceived: ${inr0(st.rcv)}\nPending: ${inr0(st.due)}\nTop types: ${topC || '—'}`;
+  window.open(waLink('', txt), '_blank');
+};
+$('#csv').onclick = () => {
+  const m = S.rMonth, rows = cache.data[m] || [];
+  const head = ['Order No','Date','Time','Customer','Phone','Item','Category','Qty','Cost Price','Selling Price','Total Cost','Total Sale','Profit','Paid','Paid On','Notes'];
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = [head.map(q).join(',')].concat(rows.map(r => [r.o, r.d, r.t, r.c, r.p, r.i, r.g, r.q, r.cp, r.sp, r.q * r.cp, r.q * r.sp, r.q * (r.sp - r.cp), r.pd ? 'Yes' : 'No', r.po, r.n].map(q).join(',')));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], {type:'text/csv'}));
+  a.download = `Stylishthread-${m.replace(' ', '-')}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+
+/* ================= NAV & BOOT ================= */
+function go(v) {
+  S.view = v;
+  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.view === v));
+  $$('.view').forEach(s => s.classList.toggle('on', s.id === 'v-' + v));
+  document.body.className = 'v-' + v;
+  window.scrollTo(0, 0);
+  if (v === 'orders') { renderOrders(); if (S.oMode === 'month') ensureMonth(S.oMonth); }
+  if (v === 'report') { renderReport(); ensureMonth(S.rMonth); }
+}
+$$('.tab').forEach(t => t.onclick = () => go(t.dataset.view));
+$('#sync').onclick = () => { flush(); refresh(); if (S.view !== 'sale') { const m = S.view === 'report' ? S.rMonth : S.oMonth; if (m !== curMonth()) loadMonth(m); } };
+
+function renderAll() {
+  const dueOrders = group(cache.pending).length;
+  $('#dueBadge').textContent = dueOrders ? (dueOrders > 99 ? '99+' : dueOrders) : '';
+  renderRecent();
+  if (S.view === 'orders') renderOrders();
+  if (S.view === 'report') renderReport();
+  setSync();
+}
+
+window.addEventListener('online', () => { flush(); refresh(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') { flush(); const m = curMonth(); if (!cache.ts[m] || Date.now() - cache.ts[m] > 60000) refresh(); }
+});
+
+// boot: draw instantly from the saved copy, then sync in the background
+$('#cDate').value = today();
+mergeUnsynced();
+renderItems(); fillDatalists(); renderAll();
+if (!cfg.url) setTimeout(() => toast('Not connected: paste your Google Sheet Web App URL in SHEET_URL at the top of index.html', 'warn'), 300);
+else { flush(); refresh(); }
+</script>
+</body>
+</html>
