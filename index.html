@@ -200,6 +200,30 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .two{display:grid;grid-template-columns:1fr;gap:0}
 .actions{display:flex;gap:6px;flex-wrap:wrap}
 
+/* bank */
+.note{font-size:12px;color:var(--muted)}
+.bal-top{font-variant-numeric:tabular-nums}
+.bank .live{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bank .live b{font-size:24px;font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+.bank .live b.neg{color:var(--due)}
+.flow{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:13px;margin:10px 0;padding:10px;background:#FBF8F9;border-radius:9px;font-variant-numeric:tabular-nums}
+.flow span{color:var(--ink2)} .flow em{font-style:normal;text-align:right;font-weight:600}
+.flow .tot{border-top:1px solid var(--line);padding-top:5px;font-weight:700;color:var(--ink)}
+.flow .src{font-size:11px;color:var(--muted);font-weight:400}
+.openbar{display:flex;align-items:center;gap:8px;background:#EEF4FF;border:1px solid #C9DAF5;color:#1E3A6B;border-radius:10px;padding:8px 10px;margin-bottom:10px;font-size:12.5px}
+.openbar span{flex:1}
+.viaseg{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;color:var(--ink2);font-weight:600}
+.viaseg button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px;font-weight:700;font-size:13.5px;color:var(--ink2)}
+.viaseg button.on{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+dialog{border:0;border-radius:16px;padding:0;width:min(420px,94vw);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(30,10,20,.45)}
+.m-h{background:var(--wine);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.m-h span{flex:1}
+.m-h button{background:none;border:0;color:#fff;font-size:16px;padding:2px 6px}
+.m-b{padding:14px;display:grid;gap:10px}
+.m-b .row{display:flex;gap:8px}
+.m-b .row .btn{flex:1;padding:13px 10px;font-size:15px}
+.big-in{font-size:22px!important;font-weight:700;text-align:center;min-height:52px}
 /* toast */
 #toast{position:fixed;left:50%;bottom:calc(128px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:50;display:grid;gap:6px;width:min(420px,92vw);pointer-events:none}
 body:not(.v-sale) #toast{bottom:calc(64px + env(safe-area-inset-bottom))}
@@ -213,7 +237,7 @@ body:not(.v-sale) #toast{bottom:calc(64px + env(safe-area-inset-bottom))}
 <header class="top">
   <div class="wrap">
     <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A3326B"/><stop offset="1" stop-color="#4F0F30"/></linearGradient></defs><circle cx="32" cy="32" r="31" fill="url(#lg)" stroke="#F0CD85" stroke-width="1.4"/><circle cx="32" cy="32" r="25.5" fill="none" stroke="#F0CD85" stroke-width="1.1" stroke-dasharray="2.4 2.2" opacity=".9"/><text x="31.5" y="40" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="23" font-weight="700" fill="#fff" letter-spacing="-.5">S<tspan fill="#F0CD85">T</tspan></text><path d="M18 45.5c8 4.4 20.5 4.6 28.5-1.2" fill="none" stroke="#F0CD85" stroke-width="1.4" stroke-linecap="round"/><path d="M44.5 42l6 4.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <div class="brand"><b>Stylishthread</b><small>Sales &amp; Profit Book</small></div>
+    <div class="brand"><b>Stylishthread</b><small id="balTop" class="bal-top">Sales &amp; Profit Book</small></div>
     <button class="sync" id="sync" title="Tap to sync now"><i></i><span>…</span></button>
   </div>
 </header>
@@ -229,6 +253,7 @@ body:not(.v-sale) #toast{bottom:calc(64px + env(safe-area-inset-bottom))}
 <main class="wrap">
   <!-- ============ NEW SALE ============ -->
   <section class="view on" id="v-sale">
+    <div class="openbar" id="openBar" hidden><span id="openTxt"></span><button class="btn sm" id="openSet">Set</button></div>
     <div class="editbar" id="editBar" hidden><span id="editTxt">Editing</span><button class="ghost" id="cancelEdit">Cancel</button></div>
     <div class="card">
       <h2>Customer</h2>
@@ -247,6 +272,7 @@ body:not(.v-sale) #toast{bottom:calc(64px + env(safe-area-inset-bottom))}
 
     <div class="card">
       <label class="switch"><input type="checkbox" id="cPaid"><span class="tr"></span><span><b id="paidLbl">Payment not received</b><small>Turn on if already paid</small></span></label>
+      <div class="viaseg" id="viaRow" hidden><span>Received in</span><button type="button" data-v="Bank">🏦 Bank</button><button type="button" data-v="Cash">💵 Cash</button></div>
       <label class="f" style="margin-top:9px"><span>Notes</span><input id="cNotes" placeholder="Courier, size, address, etc."></label>
     </div>
 
@@ -282,6 +308,7 @@ body:not(.v-sale) #toast{bottom:calc(64px + env(safe-area-inset-bottom))}
       <select id="rMonth" aria-label="Report month"></select>
       <span class="note" id="rNote"></span>
     </div>
+    <div class="card bank" id="bankCard"></div>
     <div class="kpis" id="kpis"></div>
     <div class="card">
       <div class="h2">Daily sales <span class="sub" id="chartSub"></span></div>
@@ -311,6 +338,7 @@ body:not(.v-sale) #toast{bottom:calc(64px + env(safe-area-inset-bottom))}
 </div>
 
 
+<dialog id="modal"><div class="m-h"><span id="mTitle"></span><button data-mclose aria-label="Close">✕</button></div><div class="m-b" id="mBody"></div></dialog>
 <div id="toast" aria-live="polite"></div>
 
 <script>
@@ -320,10 +348,10 @@ body:not(.v-sale) #toast{bottom:calc(64px + env(safe-area-inset-bottom))}
    ===================================================================== */
 
 // 1) Google Sheet link: Apps Script → Deploy → Web app URL (ends with /exec)
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyJpQS6tk3n0mhJGT4-qYA-OTG7tgZqY_AVMDZDZlyDkWzNlDxwzaK9RSe6U3uky9eC/exec';
+const SHEET_URL = 'PASTE_YOUR_WEB_APP_URL_HERE';
 
 // 2) UPI ID shown in WhatsApp reminders & bills (leave '' to hide it)
-const UPI_ID = 'sonalagarwal0504-1@okhdfcbank';
+const UPI_ID = 'yourname@upi';
 
 // 3) Item types shown in the "Item type" dropdown (add / remove / reorder freely)
 const ITEM_TYPES = [
@@ -355,8 +383,8 @@ const curMonth = () => monthOf(today());
 const mIdx = name => { const [m, y] = name.split(' '); return +y * 12 + MONTHS.indexOf(m); };
 const nowTime = () => new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', hour12:true}).toUpperCase();
 const NF = new Intl.NumberFormat('en-IN', {maximumFractionDigits: 2});
-const inr = n => '₹' + NF.format(Math.round((+n || 0) * 100) / 100);
-const inr0 = n => '₹' + Math.round(+n || 0).toLocaleString('en-IN');
+const inr = n => { const v = Math.round((+n || 0) * 100) / 100; return (v < 0 ? '-₹' : '₹') + NF.format(Math.abs(v)); };
+const inr0 = n => { const v = Math.round(+n || 0); return (v < 0 ? '-₹' : '₹') + Math.abs(v).toLocaleString('en-IN'); };
 const num = v => { const n = parseFloat(String(v ?? '').replace(/[₹,\s]/g, '')); return isFinite(n) ? n : 0; };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 const fmtD = ds => { if (!/^\d{4}-\d{2}-\d{2}$/.test(ds || '')) return ds || ''; const [, m, d] = ds.split('-'); return `${+d} ${MONTHS[+m - 1]}`; };
@@ -368,7 +396,7 @@ function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch
 const cfg = {url: /^https:\/\/script\.google(usercontent)?\.com\//.test(SHEET_URL.trim()) ? SHEET_URL.trim() : '', upi: UPI_ID.trim()};
 let cache = Object.assign({months:[], data:{}, pending:[], ts:{}}, load(LS.cache, {}));
 let outbox = load(LS.out, []); if (!Array.isArray(outbox)) outbox = [];
-const S = {view:'sale', items:[blankItem()], oMonth:curMonth(), oMode:'month', oFilter:'all', q:'', searchRows:[], searching:false,
+const S = {view:'sale', items:[blankItem()], via:'Cash', deltas:[], oMonth:curMonth(), oMode:'month', oFilter:'all', q:'', searchRows:[], searching:false,
            rMonth:curMonth(), limit:60, flushing:false, refreshing:0, lastWrite:0, retryT:0};
 const cats = () => ITEM_TYPES.map(s => String(s).trim()).filter(Boolean);
 function blankItem() { return {item:'', category:'', qty:1, cost:'', sell:''}; }
@@ -409,7 +437,7 @@ const lists = () => [...Object.values(cache.data), cache.pending, S.searchRows];
 function rowsFromOrder(o) {
   const s = monthOf(o.date);
   return o.items.map(it => ({s, o:o.orderNo || '', id:o.id, d:o.date, t:o.time, c:o.customer, p:o.phone, i:it.item, g:it.category,
-    q:it.qty, cp:it.cost, sp:it.sell, pd:!!o.paid, po:o.paid ? today() : '', n:o.notes, sync:o.orderNo ? undefined : 1}));
+    q:it.qty, cp:it.cost, sp:it.sell, pd:!!o.paid, pv:o.paid ? (o.via || 'Cash') : '', po:o.paid ? today() : '', n:o.notes, sync:o.orderNo ? undefined : 1}));
 }
 function addLocal(rows) {
   const s = rows[0].s, id = rows[0].id;
@@ -422,11 +450,11 @@ function findRows(key) {
   for (const l of lists()) { const f = l.filter(r => okey(r) === key); if (f.length) return f; }
   return [];
 }
-function setPaidLocal(key, paid) {
+function setPaidLocal(key, paid, via) {
   const src = findRows(key).map(r => ({...r}));
-  for (const l of lists()) for (const r of l) if (okey(r) === key) { r.pd = paid; r.po = paid ? today() : ''; }
+  for (const l of lists()) for (const r of l) if (okey(r) === key) { r.pd = paid; r.po = paid ? today() : ''; r.pv = paid ? (via || 'Cash') : ''; }
   if (paid) cache.pending = cache.pending.filter(r => okey(r) !== key);
-  else if (!cache.pending.some(r => okey(r) === key)) cache.pending.push(...src.map(r => ({...r, pd:false, po:''})));
+  else if (!cache.pending.some(r => okey(r) === key)) cache.pending.push(...src.map(r => ({...r, pd:false, po:'', pv:''})));
 }
 function removeLocal(key) {
   for (const k of Object.keys(cache.data)) cache.data[k] = cache.data[k].filter(r => okey(r) !== key);
@@ -440,7 +468,7 @@ function mergeUnsynced() {
   for (const j of outbox) {
     if (j.op === 'add') addLocal(rowsFromOrder(j.order));
     else if (j.op === 'edit') { removeLocal(j.key); removeLocal(j.order.id); addLocal(rowsFromOrder(j.order)); }
-    else if (j.op === 'paid') setPaidLocal(j.key, j.paid);
+    else if (j.op === 'paid') setPaidLocal(j.key, j.paid, j.via);
   }
 }
 function group(rows) {
@@ -448,7 +476,7 @@ function group(rows) {
   for (const r of rows) {
     const k = okey(r);
     let o = m.get(k);
-    if (!o) { o = {key:k, s:r.s, o:r.o, id:r.id, d:r.d, t:r.t, c:r.c, p:r.p, n:r.n, pd:true, sync:r.sync, items:[], sale:0, cost:0, qty:0}; m.set(k, o); }
+    if (!o) { o = {key:k, s:r.s, o:r.o, id:r.id, d:r.d, t:r.t, c:r.c, p:r.p, n:r.n, pv:r.pv || '', pd:true, sync:r.sync, items:[], sale:0, cost:0, qty:0}; m.set(k, o); }
     o.items.push(r); o.sale += r.q * r.sp; o.cost += r.q * r.cp; o.qty += r.q;
     if (!r.pd) o.pd = false;
   }
@@ -459,41 +487,153 @@ function group(rows) {
 async function flush() {
   if (S.flushing || !outbox.length || !cfg.url) { setSync(); return; }
   S.flushing = true; setSync();
+  let done = 0;
   try {
     while (outbox.length) {
       const job = outbox[0];
       if (job.op === 'add') {
-        const sent = job.order, sentPaid = !!job.order.paid;
+        const sent = job.order, sentPaid = !!job.order.paid, sentVia = job.order.via || '';
         const r = await api('addOrder', {order: job.order});
         outbox = outbox.filter(j => j !== job);
         applyOrderNo(job.order.id, r.orderNo);
         if (job.order !== sent) { // edited while it was being sent
           job.order.orderNo = r.orderNo;
           outbox.push({op:'edit', key:job.order.id, sheet:r.sheet, orderNo:r.orderNo, order:job.order});
-        } else if (!!job.order.paid !== sentPaid) outbox.push({op:'paid', key:job.order.id, sheet:r.sheet, orderNo:r.orderNo, paid:!!job.order.paid});
+        } else if (!!job.order.paid !== sentPaid || (job.order.via || '') !== sentVia) outbox.push({op:'paid', key:job.order.id, sheet:r.sheet, orderNo:r.orderNo, paid:!!job.order.paid, via:job.order.via || ''});
         toast(`Order ${r.orderNo} saved to sheet ✓`, 'ok');
       } else if (job.op === 'edit') {
         try { await api('updateOrder', {sheet:job.sheet, orderNo:job.orderNo, order:job.order}); toast(`Order ${job.orderNo} updated in sheet ✓`, 'ok'); }
         catch (e) { if (e.net || e.code === 'NO_URL' || e.code === 'BAD_URL') throw e; toast(e.message, 'err'); }
         outbox = outbox.filter(j => j !== job);
       } else if (job.op === 'paid') {
-        try { await api('setPaid', {sheet:job.sheet, orderNo:job.orderNo, paid:job.paid}); }
+        try { await api('setPaid', {sheet:job.sheet, orderNo:job.orderNo, paid:job.paid, via:job.via || ''}); }
         catch (e) { if (e.net || e.code === 'NO_URL' || e.code === 'BAD_URL') throw e; toast(e.message, 'err'); }
         outbox = outbox.filter(j => j !== job);
       } else outbox = outbox.filter(j => j !== job);
-      S.lastWrite = Date.now(); saveOut(); saveCache(); renderAll();
+      S.lastWrite = Date.now(); done++; saveOut(); saveCache(); renderAll();
     }
   } catch (e) {
     if (e.net) { clearTimeout(S.retryT); S.retryT = setTimeout(flush, 15000); }
     handleErr(e, true);
-  } finally { S.flushing = false; setSync(); }
+  } finally { S.flushing = false; setSync(); if (done && !outbox.length) fetchLedger(); }
+}
+
+/* ---------------- bank balance ---------------- */
+// live balance = last balance from the sheet + changes made on this phone since then
+function addDelta(a) { if (a) { S.deltas.push({t:Date.now(), a}); renderBank(); } }
+const deltaSum = () => S.deltas.reduce((s, d) => s + d.a, 0);
+const orderBank = o => (o.pd && o.pv === 'Bank' ? o.sale : 0);
+function setLedger(led, since) {
+  if (!led) return;
+  cache.ledger = led; S.deltas = S.deltas.filter(d => d.t >= since); saveCache(); renderBank();
+}
+async function fetchLedger() {
+  const t0 = Date.now();
+  try { const r = await api('ledger'); if (!outbox.length) setLedger(r.ledger, t0); } catch (e) {}
+}
+const ledgerMonth = m => (cache.ledger && cache.ledger.months || []).find(x => x.m === m);
+function liveBalance() { return cache.ledger ? cache.ledger.live + deltaSum() : null; }
+function renderBank() {
+  const live = liveBalance();
+  $('#balTop').textContent = live === null ? 'Sales & Profit Book' : `Bank balance ${inr0(live)}`;
+  const cm = curMonth(), L = ledgerMonth(cm);
+  const showBar = !!cache.ledger && !S.editing && (!L || L.src !== 'entered') && S.openDismiss !== cm;
+  $('#openBar').hidden = !showBar;
+  if (showBar) $('#openTxt').textContent = `Opening bank balance for ${cm} not set` + (L && L.src === 'carried' ? ` (using last month's ${inr0(L.open)})` : '');
+  if (S.view === 'report') renderBankCard();
+}
+function renderBankCard() {
+  const m = S.rMonth, L = ledgerMonth(m), cur = m === curMonth(), live = liveBalance();
+  if (!cache.ledger) { $('#bankCard').innerHTML = `<div class="h2">Bank balance</div><div class="note">${cfg.url ? 'Loading…' : 'Connect the Google Sheet to see the bank balance.'}</div>`; return; }
+  const d = cur ? deltaSum() : 0;
+  const x = L || {open:0, src:'none', cost:0, bank:0, cash:0, close:0};
+  const src = x.src === 'entered' ? 'entered' : x.src === 'carried' ? 'from last month' : 'not set';
+  $('#bankCard').innerHTML = `
+    <div class="h2">🏦 Bank balance <span class="sub">${esc(m)}</span></div>
+    <div class="live"><b class="${(cur ? live : x.close) < 0 ? 'neg' : ''}">${inr(cur ? live : x.close)}</b><span class="note">${cur ? 'live balance' : 'closing balance'}</span></div>
+    <div class="flow">
+      <span>Opening balance <span class="src">(${src})</span></span><em>${inr(x.open)}</em>
+      <span>− Stock cost of orders</span><em style="color:var(--due)">${inr(x.cost)}</em>
+      <span>+ Received in bank</span><em style="color:var(--ok)">${inr(x.bank)}</em>
+      ${d ? `<span>± Changes being saved</span><em>${inr(d)}</em>` : ''}
+      <span class="tot">${cur ? 'Balance now' : 'Closing balance'}</span><em class="tot">${inr(x.close + d)}</em>
+      <span>Cash received (not in bank)</span><em>${inr(x.cash)}</em>
+    </div>
+    <div class="actions">
+      <button class="btn sm" data-bk="open">${x.src === 'entered' ? 'Change' : 'Set'} opening balance</button>
+      <button class="btn sm lite" data-bk="pdf">Download statement PDF</button>
+      <button class="btn sm lite" data-bk="mail">Email statement</button>
+    </div>`;
+}
+$('#bankCard').addEventListener('click', e => {
+  const b = e.target.closest('[data-bk]'); if (!b) return;
+  if (b.dataset.bk === 'open') askOpening(S.rMonth);
+  else statement(S.rMonth, b.dataset.bk === 'mail', b);
+});
+$('#openSet').onclick = () => askOpening(curMonth());
+
+/* ---------------- small pop-up ---------------- */
+function openModal(title, html) { $('#mTitle').textContent = title; $('#mBody').innerHTML = html; const d = $('#modal'); if (!d.open) d.showModal(); }
+const closeModal = () => $('#modal').close();
+$('#modal').addEventListener('click', e => { if (e.target.closest('[data-mclose]') || e.target.id === 'modal') closeModal(); });
+
+function askOpening(m) {
+  if (!cfg.url) { toast('Connect the Google Sheet first (SHEET_URL)', 'warn'); return; }
+  const L = ledgerMonth(m);
+  const prevTxt = L && L.src === 'carried' ? `Leave empty to use last month's closing (${inr(L.open)}).` : 'Bank balance on the 1st of the month.';
+  openModal(`Opening balance – ${m}`, `
+    <input id="obAmt" class="big-in" inputmode="decimal" placeholder="₹ amount" value="${L && L.src === 'entered' ? L.open : ''}">
+    <div class="note">${prevTxt}</div>
+    <div class="row"><button class="btn" id="obSave">Save</button></div>`);
+  const inp = $('#obAmt'); setTimeout(() => inp.focus(), 50);
+  $('#obSave').onclick = async () => {
+    const raw = inp.value.trim(), btn = $('#obSave');
+    if (raw && !isFinite(num(raw))) { inp.classList.add('bad'); return; }
+    btn.disabled = true; btn.textContent = 'Saving…';
+    const t0 = Date.now();
+    try {
+      const r = await api('setOpening', {month:m, amount: raw === '' ? '' : num(raw)});
+      setLedger(r.ledger, t0); closeModal();
+      toast(`Opening balance for ${m} saved ✓`, 'ok'); renderAll();
+    } catch (e) { btn.disabled = false; btn.textContent = 'Save'; handleErr(e); }
+  };
+}
+
+async function statement(m, email, btn) {
+  if (!cfg.url) { toast('Connect the Google Sheet first (SHEET_URL)', 'warn'); return; }
+  const old = btn.textContent; btn.disabled = true; btn.textContent = email ? 'Sending…' : 'Preparing PDF…';
+  try {
+    const r = await api('statement', {month:m, email, download:!email}, 60000);
+    if (email) toast(`Statement emailed to ${r.emailed} ✓`, 'ok');
+    else {
+      const bin = atob(r.b64), arr = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([arr], {type:'application/pdf'})); a.download = r.name; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      toast('Statement downloaded ✓', 'ok');
+    }
+  } catch (e) { handleErr(e); }
+  finally { btn.disabled = false; btn.textContent = old; }
+}
+
+/* Bank / Cash choice when marking an order paid */
+function askVia(key, o) {
+  openModal(`Payment received · ${inr(o.sale)}`, `
+    <div class="note">${esc(o.c)}${o.o ? ' · ' + esc(o.o) : ''} — how was it paid?</div>
+    <div class="row"><button class="btn" data-via="Bank">🏦 Bank</button><button class="btn lite" data-via="Cash">💵 Cash</button></div>`);
+  $('#mBody').querySelectorAll('[data-via]').forEach(b => b.onclick = () => {
+    closeModal();
+    const rows = findRows(key); if (rows.length) togglePaid(key, group(rows)[0], true, b.dataset.via);
+  });
 }
 
 async function refresh(month = curMonth()) {
   if (!cfg.url) { setSync(); return; }
-  const started = Date.now(); S.refreshing++; setSync();
+  const started = Date.now(), idle = !outbox.length; S.refreshing++; setSync();
   try {
     const r = await api('bootstrap', {month});
+    if (r.ledger && idle && !outbox.length) setLedger(r.ledger, started); else if (r.ledger && !cache.ledger) cache.ledger = r.ledger;
     cache.months = r.months; cache.data[month] = r.rows; cache.pending = r.pending; cache.ts[month] = Date.now();
     if (Array.isArray(r.customers)) { for (const c of r.customers) rememberCustomer(c.n, c.p, c.t || 0); saveCust(); }
     mergeUnsynced(); saveCache(); fillDatalists(); renderAll();
@@ -590,7 +730,10 @@ $('#addItem').onclick = () => {
   S.items.push(blankItem()); renderItems();
   const last = $$('.item').pop(); last.scrollIntoView({behavior:'smooth', block:'center'}); last.querySelector('[data-f=category]').focus({preventScroll:true});
 };
-$('#cPaid').onchange = e => { $('#paidLbl').textContent = e.target.checked ? 'Payment received ✓' : 'Payment not received'; };
+function setVia(v) { S.via = v; $$('#viaRow [data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v)); }
+$('#cPaid').onchange = e => { $('#paidLbl').textContent = e.target.checked ? 'Payment received ✓' : 'Payment not received'; $('#viaRow').hidden = !e.target.checked; };
+$('#viaRow').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) setVia(b.dataset.v); });
+setVia('Cash');
 $('#cDate').oninput = () => { const nt = $('#cDate').value !== today(); $('#cDate').classList.toggle('notToday', nt); $('#dateHint').hidden = !nt; };
 
 /* ---- customer name suggestions + phone auto-fill ---- */
@@ -649,7 +792,7 @@ function resetForm() {
   S.items = [blankItem()]; renderItems();
   const ph = $('#cPhone');
   $('#cName').value = ''; ph.value = ''; delete ph.dataset.auto; ph.classList.remove('auto', 'bad'); $('#cNotes').value = '';
-  $('#cPaid').checked = false; $('#cPaid').onchange({target:$('#cPaid')});
+  $('#cPaid').checked = false; $('#cPaid').onchange({target:$('#cPaid')}); setVia('Cash');
 }
 
 function saveSale() {
@@ -671,6 +814,11 @@ function saveSale() {
   const ed = S.editing;
   const order = {id: ed ? (ed.id || uid()) : uid(), date, time: ed ? (ed.time || nowTime()) : nowTime(), customer:name,
     phone: fullPhone(phone), notes:$('#cNotes').value.trim(), paid:$('#cPaid').checked, items};
+  order.via = order.paid ? S.via : '';
+  // bank: cost goes out now; selling amount comes in if paid into bank
+  const newCost = items.reduce((s, it) => s + it.qty * it.cost, 0), newSale = items.reduce((s, it) => s + it.qty * it.sell, 0);
+  let delta = -newCost + (order.paid && order.via === 'Bank' ? newSale : 0);
+  if (ed) { const old = group(findRows(ed.key))[0]; if (old) delta += old.cost - orderBank(old); }
 
   if (ed && !ed.orderNo) { // order not yet sent to the sheet – just change what is waiting to be sent
     const job = outbox.find(j => j.op === 'add' && j.order.id === ed.id);
@@ -685,7 +833,7 @@ function saveSale() {
     addLocal(rowsFromOrder(order));
     outbox.push({op:'add', order});
   }
-  saveOut(); saveCache();
+  saveOut(); saveCache(); addDelta(delta);
   rememberCustomer(name, order.phone, Date.now(), true); saveCust();
   fillDatalists();
   resetForm();
@@ -710,15 +858,15 @@ function startEdit(key) {
   $('#cName').value = o.c; ph.value = local10(o.p); delete ph.dataset.auto; ph.classList.remove('auto', 'bad');
   $('#cDate').value = /^\d{4}-\d{2}-\d{2}$/.test(o.d) ? o.d : today(); $('#cDate').oninput();
   $('#cNotes').value = o.n || '';
-  $('#cPaid').checked = o.pd; $('#cPaid').onchange({target:$('#cPaid')});
+  $('#cPaid').checked = o.pd; $('#cPaid').onchange({target:$('#cPaid')}); setVia(o.pd && o.pv === 'Bank' ? 'Bank' : 'Cash');
   S.items = o.items.map(r => ({item: r.i && r.i !== r.g && r.i !== 'Item' ? r.i : '', category:r.g, qty:r.q, cost:String(r.cp), sell:String(r.sp)}));
   renderItems();
   $('#editBar').hidden = false; $('#editTxt').textContent = `Editing order ${o.o || '(not yet synced)'} · ${o.c}`;
   $('#saveTxt').textContent = 'Update';
-  go('sale');
+  go('sale'); renderBank();
 }
 function stopEdit() {
-  S.editing = null; $('#editBar').hidden = true; $('#saveTxt').textContent = 'Save Sale';
+  S.editing = null; $('#editBar').hidden = true; $('#saveTxt').textContent = 'Save Sale'; renderBank();
   $('#cDate').value = today(); $('#cDate').oninput();
 }
 $('#cancelEdit').onclick = () => { const back = S.editing && S.editing.back; resetForm(); stopEdit(); go(back || 'orders'); };
@@ -768,7 +916,7 @@ function orderCard(o) {
     </div>
     <div class="o-items">${items}${o.n ? ` <span>— ${esc(o.n)}</span>` : ''}</div>
     <div class="o-actions">
-      <button class="paybox${o.pd ? ' on' : ''}" role="checkbox" aria-checked="${o.pd}" data-act="paid"><span class="bx"></span>${o.pd ? 'Paid' : 'Not paid'}</button>
+      <button class="paybox${o.pd ? ' on' : ''}" role="checkbox" aria-checked="${o.pd}" data-act="paid"><span class="bx"></span>${o.pd ? 'Paid · ' + (o.pv || 'Cash') : 'Not paid'}</button>
       <button class="ghost" data-act="${o.pd ? 'bill' : 'remind'}">${ICON_WA}${o.pd ? 'Send bill' : 'Remind'}</button>
       <button class="ghost ed" data-act="edit">Edit</button>
       <button class="ghost del" data-act="del">Delete</button>
@@ -859,7 +1007,10 @@ function onOrderClick(e) {
   const card = b.closest('.order'); if (!card) return;
   const key = card.dataset.key, rows = findRows(key); if (!rows.length) return;
   const o = group(rows)[0];
-  if (b.dataset.act === 'paid') togglePaid(key, o);
+  if (b.dataset.act === 'paid') {
+    if (!o.pd) askVia(key, o);
+    else if (confirm(`Mark ${o.c}'s order ${o.o || ''} (${inr(o.sale)}) as NOT paid?`)) togglePaid(key, o, false, '');
+  }
   else if (b.dataset.act === 'remind') window.open(waLink(o.p, remindText(o)), '_blank');
   else if (b.dataset.act === 'bill') window.open(waLink(o.p, billText(o)), '_blank');
   else if (b.dataset.act === 'edit') startEdit(key);
@@ -869,20 +1020,21 @@ $('#olist').addEventListener('click', onOrderClick);
 $('#v-orders').addEventListener('click', e => { if (e.target.closest('#backMonth')) onOrderClick(e); });
 $('#recent').addEventListener('click', onOrderClick);
 
-function togglePaid(key, o) {
-  const paid = !o.pd;
-  setPaidLocal(key, paid);
-  if (!o.o) { const job = outbox.find(j => j.op === 'add' && j.order.id === o.id); if (job) job.order.paid = paid; }
-  else { outbox = outbox.filter(j => !(j.op === 'paid' && j.key === key)); outbox.push({op:'paid', key, sheet:o.s, orderNo:o.o, paid}); }
-  saveOut(); saveCache(); renderAll();
-  toast(paid ? `${o.c} – marked PAID ✓` : `${o.c} – marked not paid`, paid ? 'ok' : '');
+function togglePaid(key, o, paid, via) {
+  via = paid ? (via || 'Cash') : '';
+  const before = orderBank(o);
+  setPaidLocal(key, paid, via);
+  if (!o.o) { const job = outbox.find(j => j.op === 'add' && j.order.id === o.id); if (job) { job.order.paid = paid; job.order.via = via; } }
+  else { outbox = outbox.filter(j => !(j.op === 'paid' && j.key === key)); outbox.push({op:'paid', key, sheet:o.s, orderNo:o.o, paid, via}); }
+  saveOut(); saveCache(); addDelta((paid && via === 'Bank' ? o.sale : 0) - before); renderAll();
+  toast(paid ? `${o.c} – PAID by ${via} ✓${via === 'Bank' ? ' · ' + inr(o.sale) + ' added to bank' : ''}` : `${o.c} – marked not paid`, paid ? 'ok' : '');
   flush();
 }
 async function deleteOrder(key, o) {
   if (S.editing && S.editing.key === key) { toast('Finish or cancel the edit first', 'warn'); return; }
   if (!confirm(`Delete order ${o.o || ''} of ${o.c} (${inr(o.sale)})?\nThis also removes it from the Google Sheet.`)) return;
-  if (!o.o) { outbox = outbox.filter(j => !(j.op === 'add' && j.order.id === o.id)); saveOut(); removeLocal(key); saveCache(); renderAll(); toast('Deleted'); return; }
-  try { await api('deleteOrder', {sheet:o.s, orderNo:o.o}); removeLocal(key); saveCache(); renderAll(); toast(`Order ${o.o} deleted`); }
+  if (!o.o) { outbox = outbox.filter(j => !(j.op === 'add' && j.order.id === o.id)); saveOut(); removeLocal(key); saveCache(); addDelta(o.cost - orderBank(o)); renderAll(); toast('Deleted'); return; }
+  try { await api('deleteOrder', {sheet:o.s, orderNo:o.o}); removeLocal(key); saveCache(); addDelta(o.cost - orderBank(o)); renderAll(); toast(`Order ${o.o} deleted`); fetchLedger(); }
   catch (e) { handleErr(e); }
 }
 
@@ -917,6 +1069,7 @@ function stats(rows) {
   return st;
 }
 function renderReport() {
+  renderBankCard();
   const m = S.rMonth, rows = cache.data[m] || [];
   $('#rMonth').innerHTML = monthOptions(m);
   $('#rNote').textContent = cache.ts[m] ? 'Updated ' + new Date(cache.ts[m]).toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}) : (cfg.url ? 'Loading…' : '');
@@ -999,7 +1152,7 @@ $('#sync').onclick = () => { flush(); refresh(); if (S.view !== 'sale') { const 
 function renderAll() {
   const dueOrders = group(cache.pending).length;
   $('#dueBadge').textContent = dueOrders ? (dueOrders > 99 ? '99+' : dueOrders) : '';
-  renderRecent();
+  renderRecent(); renderBank();
   if (S.view === 'orders') renderOrders();
   if (S.view === 'report') renderReport();
   setSync();
